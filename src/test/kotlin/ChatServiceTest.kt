@@ -27,8 +27,8 @@ class ChatServiceTest {
     @Test
     fun testCreateMessageWithNonExistingChat() {
         // Отправка сообщения в несуществующий чат
-        assertThrows(IllegalArgumentException::class.java) {
-            service.createMessage(2, user1, "Hello, Bob!")
-        }
+        service.createMessage(2, user1, "Hello, Bob!")
+        // Проверяем, что чат создан
+        assertEquals(1, service.getChats().size)
     }
 }
