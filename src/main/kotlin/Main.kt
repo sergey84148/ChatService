@@ -6,11 +6,7 @@ fun main() {
     val user2 = User(2, "Bob")
 
     // Создание чата
-    service.createChat(user1, user2)
-
-    // Создание сообщений
     service.createMessage(1, user1, "Hello, Bob!")
-    service.createMessage(1, user2, "Hi, Alice!")
 
     // Получение количества непрочитанных чатов
     println("Unread chats count: ${service.getUnreadChatsCount()}")

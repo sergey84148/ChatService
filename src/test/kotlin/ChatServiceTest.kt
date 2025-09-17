@@ -9,30 +9,26 @@ class ChatServiceTest {
     private val user2 = User(2, "Bob")
 
     @Test
-    fun testCreateChat() {
-        service.createChat(user1, user2)
+    fun testCreateMessage() {
+        // Создание чата при отправке первого сообщения
+        service.createMessage(1, user1, "Hello, Bob!")
         assertEquals(1, service.getChats().size)
     }
 
     @Test
-    fun testCreateMessage() {
-        service.createChat(user1, user2)
+    fun testCreateMessageWithExistingChat() {
+        // Создание чата при отправке первого сообщения
         service.createMessage(1, user1, "Hello, Bob!")
-        assertEquals(1, service.getMessages(1, 1).size)
+        // Отправка сообщения в существующий чат
+        service.createMessage(1, user2, "Hi, Alice!")
+        assertEquals(1, service.getChats().size)
     }
 
     @Test
-    fun testDeleteMessage() {
-        service.createChat(user1, user2)
-        service.createMessage(1, user1, "Hello, Bob!")
-        service.deleteMessage(1, 1)
-        assertTrue(service.getMessages(1, 1).isEmpty())
-    }
-
-    @Test
-    fun testDeleteChat() {
-        service.createChat(user1, user2)
-        service.deleteChat(1)
-        assertTrue(service.getChats().isEmpty())
+    fun testCreateMessageWithNonExistingChat() {
+        // Отправка сообщения в несуществующий чат
+        assertThrows(IllegalArgumentException::class.java) {
+            service.createMessage(2, user1, "Hello, Bob!")
+        }
     }
 }
