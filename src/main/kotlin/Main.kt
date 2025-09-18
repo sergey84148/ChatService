@@ -6,7 +6,7 @@ fun main() {
     val user2 = User(2, "Bob")
 
     // Создание чата
-    service.createMessage(1, user1, "Hello, Bob!")
+    service.createMessage(1, user1, user2, "Hello, Bob!")
 
     // Получение количества непрочитанных чатов
     println("Unread chats count: ${service.getUnreadChatsCount()}")
@@ -18,7 +18,8 @@ fun main() {
     println("Last messages: ${service.getLastMessages(2)}")
 
     // Получение сообщений из чата
-    println("Messages in chat 1: ${service.getMessages(1, 2)}")
+    val lastTwoMessages = service.getMessages(1, minOf(service.getMessages(1, Int.MAX_VALUE).size, 2)) // ограничение на два сообщения
+    println("Messages in chat 1: $lastTwoMessages")
 
     // Удаление сообщения
     service.deleteMessage(1, 1)

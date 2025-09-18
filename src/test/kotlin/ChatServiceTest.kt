@@ -1,7 +1,9 @@
 package ru.netology
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+
 
 class ChatServiceTest {
     private val service = ChatService()
@@ -9,26 +11,51 @@ class ChatServiceTest {
     private val user2 = User(2, "Bob")
 
     @Test
-    fun testCreateMessage() {
-        // Создание чата при отправке первого сообщения
-        service.createMessage(1, user1, "Hello, Bob!")
+    fun `test create message creates a new chat`() {
+        service.createMessage(1, user1, user2, "Hello, Bob!")
         assertEquals(1, service.getChats().size)
     }
 
     @Test
-    fun testCreateMessageWithExistingChat() {
-        // Создание чата при отправке первого сообщения
-        service.createMessage(1, user1, "Hello, Bob!")
-        // Отправка сообщения в существующий чат
-        service.createMessage(1, user2, "Hi, Alice!")
+    fun `test create message adds to an existing chat`() {
+        service.createMessage(1, user1, user2, "Hello, Bob!")
+        service.createMessage(1, user2, user1, "Hi, Alice!")
         assertEquals(1, service.getChats().size)
     }
 
     @Test
-    fun testCreateMessageWithNonExistingChat() {
-        // Отправка сообщения в несуществующий чат
-        service.createMessage(2, user1, "Hello, Bob!")
-        // Проверяем, что чат создан
-        assertEquals(1, service.getChats().size)
+    fun `test get messages throws exception for non-existing chat`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            service.getMessages(999, 2)
+        }
+    }
+
+    @Test
+    fun `test delete message removes the correct message from chat`() {
+        service.createMessage(1, user1, user2, "Hello, Bob!")
+        service.deleteMessage(1, 1)
+        assertEquals(emptyList<Message>(), service.getMessages(1, 2))
+    }
+
+    @Test
+    fun `test delete chat removes the entire chat`() {
+        service.createMessage(1, user1, user2, "Hello, Bob!")
+        service.deleteChat(1)
+        assertEquals(emptyList<Chat>(), service.getChats())
+    }
+
+    @Test
+    fun `test delete chat throws exception for non-existing chat`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            service.deleteChat(999)
+        }
+    }
+
+    @Test
+    fun `test delete message throws exception for non-existing message`() {
+        service.createMessage(1, user1, user2, "Hello, Bob!")
+        assertThrows(IllegalArgumentException::class.java) {
+            service.deleteMessage(1, 999)
+        }
     }
 }
