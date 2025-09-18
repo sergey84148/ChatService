@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
-
 class ChatServiceTest {
     private val service = ChatService()
     private val user1 = User(1, "Alice")

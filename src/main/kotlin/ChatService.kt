@@ -18,8 +18,8 @@ data class Chat(
 
 class ChatService {
     private val chats = mutableListOf<Chat>()
-    private var nextChatId = 1      // Генерируем уникальный ID для чатов
-    private var nextMessageId = 1   // Генерируем уникальный ID для сообщений
+    private var nextChatId = 1
+    private var nextMessageId = 1
 
     fun getUnreadChatsCount(): Int {
         return chats.count { chat -> chat.messages.any { !it.isRead } }
@@ -33,29 +33,37 @@ class ChatService {
         return chats.flatMap { chat -> chat.messages.takeLast(limit).map { it.text } }
     }
 
-    fun getMessages(chatId: Int, limit: Int): List<Message> {
-        val chat = chats.find { it.id == chatId } ?: throw IllegalArgumentException("Chat not found")
-        return chat.messages.takeLast(limit).onEach { it.isRead = true }
-    }
+    fun getMessages(chatId: Int, limit: Int): List<Message> =
+        chats.find { it.id == chatId }
+            ?.let { it.messages.takeLast(limit).onEach { msg -> msg.isRead = true } }
+            ?: throw IllegalArgumentException("Chat with id=$chatId not found")
 
-    fun createMessage(chatId: Int, sender: User, user2: User, text: String) {
+    fun createMessage(chatId: Int, sender: User, receiver: User, text: String) {
         val chat = chats.find { it.id == chatId }
         if (chat == null) {
-            // Если чат не существует, создаем его
-            val newChat = Chat(chats.size + 1, sender, sender, mutableListOf()) // <-----
+            val newChat = Chat(nextChatId++, sender, receiver, mutableListOf())
             chats.add(newChat)
-            newChat.messages.add(Message(newChat.messages.size + 1, sender, text, System.currentTimeMillis()))
+            newChat.messages.add(Message(nextMessageId++, sender, text, System.currentTimeMillis()))
         } else {
-            chat.messages.add(Message(chat.messages.size + 1, sender, text, System.currentTimeMillis()))
+            chat.messages.add(Message(nextMessageId++, sender, text, System.currentTimeMillis()))
         }
     }
 
     fun deleteMessage(chatId: Int, messageId: Int) {
-        val chat = chats.find { it.id == chatId } ?: throw IllegalArgumentException("Chat not found")
-        chat.messages.removeIf { it.id == messageId }
+        val chat = chats.find { it.id == chatId } ?: throw IllegalArgumentException("Chat with id=$chatId not found")
+
+        val index = chat.messages.indexOfFirst { it.id == messageId }
+        if (index == -1) {
+            throw IllegalArgumentException("Message with id=$messageId not found in chat with id=$chatId")
+        }
+
+        chat.messages.removeAt(index)
     }
 
     fun deleteChat(chatId: Int) {
-        chats.removeIf { it.id == chatId }
+        val deleted = chats.removeIf { it.id == chatId }
+        if (!deleted) {
+            throw IllegalArgumentException("Chat with id=$chatId not found")
+        }
     }
 }
