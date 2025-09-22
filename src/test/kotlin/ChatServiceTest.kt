@@ -12,14 +12,14 @@ class ChatServiceTest {
     @Test
     fun `test create message creates a new chat`() {
         service.createMessage(1, user1, user2, "Hello, Bob!")
-        assertEquals(1, service.getChats().size)
+        assertEquals(1, service.getChats().toList().size) // Преобразуем последовательность обратно в список
     }
 
     @Test
     fun `test create message adds to an existing chat`() {
         service.createMessage(1, user1, user2, "Hello, Bob!")
         service.createMessage(1, user2, user1, "Hi, Alice!")
-        assertEquals(1, service.getChats().size)
+        assertEquals(1, service.getChats().toList().size)
     }
 
     @Test
@@ -33,14 +33,14 @@ class ChatServiceTest {
     fun `test delete message removes the correct message from chat`() {
         service.createMessage(1, user1, user2, "Hello, Bob!")
         service.deleteMessage(1, 1)
-        assertEquals(emptyList<Message>(), service.getMessages(1, 2))
+        assertEquals(emptyList<Message>(), service.getMessages(1, 2).toList())
     }
 
     @Test
     fun `test delete chat removes the entire chat`() {
         service.createMessage(1, user1, user2, "Hello, Bob!")
         service.deleteChat(1)
-        assertEquals(emptyList<Chat>(), service.getChats())
+        assertEquals(emptyList<Chat>(), service.getChats().toList())
     }
 
     @Test

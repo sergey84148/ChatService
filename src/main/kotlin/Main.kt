@@ -12,20 +12,20 @@ fun main() {
     println("Unread chats count: ${service.getUnreadChatsCount()}")
 
     // Получение списка чатов
-    println("Chats: ${service.getChats()}")
+    println("Chats: ${service.getChats().toList()}") // Преобразовать в список для печати
 
     // Получение последних сообщений
-    println("Last messages: ${service.getLastMessages(2)}")
+    println("Last messages: ${service.getLastMessages(2).toList()}") // Преобразовать в список для печати
 
     // Получение сообщений из чата
-    val lastTwoMessages = service.getMessages(1, minOf(service.getMessages(1, Int.MAX_VALUE).size, 2)) // ограничение на два сообщения
+    val lastTwoMessages = service.getMessages(1, 2).toList() // Преобразовать в список
     println("Messages in chat 1: $lastTwoMessages")
 
     // Удаление сообщения
     service.deleteMessage(1, 1)
-    println("Messages in chat 1 after deletion: ${service.getMessages(1, 2)}")
+    println("Messages in chat 1 after deletion: ${service.getMessages(1, 2).toList()}")
 
     // Удаление чата
     service.deleteChat(1)
-    println("Chats after deletion: ${service.getChats()}")
+    println("Chats after deletion: ${service.getChats().toList()}")
 }
